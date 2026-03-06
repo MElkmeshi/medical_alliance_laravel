@@ -1,4 +1,17 @@
 {
+  "permissions": {
+    "allow": [
+      "mcp__laravel-boost__application-info",
+      "mcp__laravel-boost__database-schema",
+      "WebFetch(domain:inertiajs.com)",
+      "Bash(php artisan:*)",
+      "Bash(vendor/bin/pint:*)",
+      "Bash(mv:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)",
+      "Bash(npm run:*)"
+    ]
+  },
   "enabledMcpjsonServers": [
     "laravel-boost",
     "herd"

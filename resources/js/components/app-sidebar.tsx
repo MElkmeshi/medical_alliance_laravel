@@ -1,7 +1,6 @@
-import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { Building2, ClipboardList, LayoutGrid, Stethoscope, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -13,38 +12,56 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
-import type { NavItem } from '@/types';
+import type { NavItem, User } from '@/types';
 
-const mainNavItems: NavItem[] = [
+const adminNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard(),
+        href: '/admin/dashboard',
         icon: LayoutGrid,
+    },
+    {
+        title: 'Examinations',
+        href: '/admin/examinations',
+        icon: Stethoscope,
+    },
+    {
+        title: 'Examination Profiles',
+        href: '/admin/examination-profiles',
+        icon: ClipboardList,
+    },
+    {
+        title: 'Companies',
+        href: '/admin/companies',
+        icon: Building2,
     },
 ];
 
-const footerNavItems: NavItem[] = [
+const companyNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
+        title: 'Dashboard',
+        href: '/company/dashboard',
+        icon: LayoutGrid,
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        title: 'Employees',
+        href: '/company/employees',
+        icon: Users,
     },
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage<{ auth: { user: User } }>().props;
+    const navItems = auth.user.role === 'admin' ? adminNavItems : companyNavItems;
+    const homeHref = auth.user.role === 'admin' ? '/admin/dashboard' : '/company/dashboard';
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href={homeHref} prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -53,11 +70,10 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={navItems} />
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

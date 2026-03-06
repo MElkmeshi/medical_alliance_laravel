@@ -1,6 +1,7 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import InputError from '@/components/input-error';
+import { MultiSelect } from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -26,9 +27,7 @@ export default function ExaminationProfileEdit({ profile, examinations }: Props)
         (profile.examinations ?? []).map((e) => e.id),
     );
 
-    function toggleExam(id: number, checked: boolean) {
-        setSelectedIds((prev) => (checked ? [...prev, id] : prev.filter((v) => v !== id)));
-    }
+    const examOptions = examinations.map((e) => ({ value: e.id, label: e.name, description: e.description }));
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -68,28 +67,15 @@ export default function ExaminationProfileEdit({ profile, examinations }: Props)
                                 <InputError message={errors.is_active} />
                             </div>
 
-                            <div className="grid gap-3">
+                            <div className="grid gap-2">
                                 <Label>Examinations</Label>
-                                <div className="grid gap-2 rounded-md border p-4">
-                                    {examinations.map((exam) => (
-                                        <div key={exam.id} className="flex items-center gap-2">
-                                            <Checkbox
-                                                id={`exam-${exam.id}`}
-                                                checked={selectedIds.includes(exam.id)}
-                                                onCheckedChange={(checked) => toggleExam(exam.id, checked === true)}
-                                            />
-                                            <Label htmlFor={`exam-${exam.id}`} className="font-normal">
-                                                {exam.name}
-                                                {exam.description && (
-                                                    <span className="ml-1 text-muted-foreground">- {exam.description}</span>
-                                                )}
-                                            </Label>
-                                        </div>
-                                    ))}
-                                    {examinations.length === 0 && (
-                                        <p className="text-sm text-muted-foreground">No examinations available.</p>
-                                    )}
-                                </div>
+                                <MultiSelect
+                                    options={examOptions}
+                                    selected={selectedIds}
+                                    onChange={setSelectedIds}
+                                    placeholder="Search examinations..."
+                                    emptyMessage="No examinations found."
+                                />
                                 <InputError message={errors.examinations} />
                             </div>
 

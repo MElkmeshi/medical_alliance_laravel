@@ -115,7 +115,7 @@ export default function EmployeeShow({ employee, examinationProfiles }: Props) {
                                         </td>
                                         <td className="px-6 py-3 text-muted-foreground">{checkup.notes ?? '-'}</td>
                                         <td className="px-6 py-3">
-                                            <Button variant="ghost" size="sm" asChild>
+                                            <Button variant="outline" size="sm" asChild>
                                                 <Link href={`/admin/checkups/${checkup.id}`}>View</Link>
                                             </Button>
                                         </td>

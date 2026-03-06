@@ -1,5 +1,7 @@
 import { Form, Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
 import InputError from '@/components/input-error';
+import { MultiSelect } from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -21,7 +23,11 @@ export default function CompanyEdit({ company, examinationProfiles }: Props) {
         { title: 'Edit', href: `/admin/companies/${company.id}/edit` },
     ];
 
-    const selectedProfileIds = (company.examination_profiles ?? []).map((p) => p.id);
+    const [selectedIds, setSelectedIds] = useState<number[]>(
+        (company.examination_profiles ?? []).map((p) => p.id),
+    );
+
+    const profileOptions = examinationProfiles.map((p) => ({ value: p.id, label: p.name, description: p.description }));
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -79,31 +85,21 @@ export default function CompanyEdit({ company, examinationProfiles }: Props) {
                                 <InputError message={errors.is_active} />
                             </div>
 
-                            <div className="grid gap-3">
+                            <div className="grid gap-2">
                                 <Label>Examination Profiles</Label>
-                                <div className="grid gap-2 rounded-md border p-4">
-                                    {examinationProfiles.map((profile) => (
-                                        <div key={profile.id} className="flex items-center gap-2">
-                                            <Checkbox
-                                                id={`profile-${profile.id}`}
-                                                name="examination_profiles[]"
-                                                value={String(profile.id)}
-                                                defaultChecked={selectedProfileIds.includes(profile.id)}
-                                            />
-                                            <Label htmlFor={`profile-${profile.id}`} className="font-normal">
-                                                {profile.name}
-                                                {profile.description && (
-                                                    <span className="ml-1 text-muted-foreground">- {profile.description}</span>
-                                                )}
-                                            </Label>
-                                        </div>
-                                    ))}
-                                    {examinationProfiles.length === 0 && (
-                                        <p className="text-sm text-muted-foreground">No examination profiles available.</p>
-                                    )}
-                                </div>
+                                <MultiSelect
+                                    options={profileOptions}
+                                    selected={selectedIds}
+                                    onChange={setSelectedIds}
+                                    placeholder="Search examination profiles..."
+                                    emptyMessage="No examination profiles found."
+                                />
                                 <InputError message={errors.examination_profiles} />
                             </div>
+
+                            {selectedIds.map((id) => (
+                                <input key={id} type="hidden" name="examination_profiles[]" value={id} />
+                            ))}
 
                             <div className="flex items-center gap-4">
                                 <Button type="submit" disabled={processing}>

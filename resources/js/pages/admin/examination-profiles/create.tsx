@@ -1,5 +1,7 @@
 import { Form, Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
 import InputError from '@/components/input-error';
+import { MultiSelect } from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -19,6 +21,10 @@ type Props = {
 };
 
 export default function ExaminationProfileCreate({ examinations }: Props) {
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+    const examOptions = examinations.map((e) => ({ value: e.id, label: e.name, description: e.description }));
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Examination Profile" />
@@ -56,30 +62,21 @@ export default function ExaminationProfileCreate({ examinations }: Props) {
                                 <InputError message={errors.is_active} />
                             </div>
 
-                            <div className="grid gap-3">
+                            <div className="grid gap-2">
                                 <Label>Examinations</Label>
-                                <div className="grid gap-2 rounded-md border p-4">
-                                    {examinations.map((exam) => (
-                                        <div key={exam.id} className="flex items-center gap-2">
-                                            <Checkbox
-                                                id={`exam-${exam.id}`}
-                                                name="examinations[]"
-                                                value={String(exam.id)}
-                                            />
-                                            <Label htmlFor={`exam-${exam.id}`} className="font-normal">
-                                                {exam.name}
-                                                {exam.description && (
-                                                    <span className="ml-1 text-muted-foreground">- {exam.description}</span>
-                                                )}
-                                            </Label>
-                                        </div>
-                                    ))}
-                                    {examinations.length === 0 && (
-                                        <p className="text-sm text-muted-foreground">No examinations available.</p>
-                                    )}
-                                </div>
+                                <MultiSelect
+                                    options={examOptions}
+                                    selected={selectedIds}
+                                    onChange={setSelectedIds}
+                                    placeholder="Search examinations..."
+                                    emptyMessage="No examinations found."
+                                />
                                 <InputError message={errors.examinations} />
                             </div>
+
+                            {selectedIds.map((id) => (
+                                <input key={id} type="hidden" name="examinations[]" value={id} />
+                            ))}
 
                             <div className="flex items-center gap-4">
                                 <Button type="submit" disabled={processing}>

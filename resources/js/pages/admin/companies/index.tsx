@@ -56,13 +56,13 @@ export default function CompaniesIndex({ companies }: Props) {
                                         </td>
                                         <td className="px-6 py-3">
                                             <div className="flex items-center gap-2">
-                                                <Button variant="ghost" size="sm" asChild>
+                                                <Button variant="outline" size="sm" asChild>
                                                     <Link href={`/admin/companies/${company.id}`}>View</Link>
                                                 </Button>
-                                                <Button variant="ghost" size="sm" asChild>
+                                                <Button variant="outline" size="sm" asChild>
                                                     <Link href={`/admin/companies/${company.id}/edit`}>Edit</Link>
                                                 </Button>
-                                                <Button variant="ghost" size="sm" onClick={() => handleDelete(company.id)}>
+                                                <Button variant="destructive" size="sm" onClick={() => handleDelete(company.id)}>
                                                     Delete
                                                 </Button>
                                             </div>

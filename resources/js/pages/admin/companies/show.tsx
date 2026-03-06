@@ -131,7 +131,7 @@ export default function CompanyShow({ company }: Props) {
                                         <td className="px-6 py-3">{employee.email ?? '-'}</td>
                                         <td className="px-6 py-3">
                                             <div className="flex items-center gap-2">
-                                                <Button variant="ghost" size="sm" asChild>
+                                                <Button variant="outline" size="sm" asChild>
                                                     <Link href={`/admin/employees/${employee.id}`}>View</Link>
                                                 </Button>
                                                 {(company.examination_profiles ?? []).map((profile) => (

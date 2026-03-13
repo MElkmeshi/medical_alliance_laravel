@@ -14,5 +14,5 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::resource('examination-profiles', ExaminationProfileController::class);
     Route::resource('companies', CompanyController::class);
     Route::get('employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
-    Route::resource('checkups', CheckupController::class)->only(['create', 'store', 'show']);
+    Route::resource('checkups', CheckupController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
 });

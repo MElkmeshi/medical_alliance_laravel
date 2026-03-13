@@ -11,7 +11,8 @@
       "Bash(npx vite:*)",
       "Bash(npm run:*)",
       "Bash(npx shadcn@latest:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "mcp__laravel-boost__get-absolute-url"
     ]
   },
   "enabledMcpjsonServers": [

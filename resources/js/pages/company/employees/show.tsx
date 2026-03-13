@@ -1,19 +1,39 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { StatusBadge } from '@/components/status-badge';
+import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import type { Employee } from '@/types/medical';
+import type { Employee, ExaminationProfile } from '@/types/medical';
 
 type Props = {
     employee: Employee;
+    examinationProfiles: Pick<ExaminationProfile, 'id' | 'name'>[];
 };
 
-export default function EmployeesShow({ employee }: Props) {
+export default function EmployeesShow({ employee, examinationProfiles }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Company Dashboard', href: '/company/dashboard' },
         { title: 'Employees', href: '/company/employees' },
         { title: employee.name, href: `/company/employees/${employee.id}` },
     ];
+
+    const form = useForm({
+        employee_id: employee.id,
+        examination_profile_id: '',
+        checkup_date: new Date().toISOString().split('T')[0],
+        exam_type: '',
+        job_environment: '',
+        notes: '',
+    });
+
+    function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        form.post('/company/checkups');
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -27,7 +47,7 @@ export default function EmployeesShow({ employee }: Props) {
                 </div>
 
                 <div className="max-w-2xl rounded-xl border p-6">
-                    <dl className="grid gap-4">
+                    <dl className="grid gap-4 sm:grid-cols-2">
                         <div>
                             <dt className="text-sm font-medium text-muted-foreground">Name</dt>
                             <dd className="mt-1">{employee.name}</dd>
@@ -41,6 +61,14 @@ export default function EmployeesShow({ employee }: Props) {
                             <dd className="mt-1">{employee.date_of_birth || '-'}</dd>
                         </div>
                         <div>
+                            <dt className="text-sm font-medium text-muted-foreground">Sex</dt>
+                            <dd className="mt-1 capitalize">{employee.sex || '-'}</dd>
+                        </div>
+                        <div>
+                            <dt className="text-sm font-medium text-muted-foreground">Nationality</dt>
+                            <dd className="mt-1">{employee.nationality || '-'}</dd>
+                        </div>
+                        <div>
                             <dt className="text-sm font-medium text-muted-foreground">Phone</dt>
                             <dd className="mt-1">{employee.phone || '-'}</dd>
                         </div>
@@ -48,9 +76,113 @@ export default function EmployeesShow({ employee }: Props) {
                             <dt className="text-sm font-medium text-muted-foreground">Email</dt>
                             <dd className="mt-1">{employee.email || '-'}</dd>
                         </div>
+                        <div>
+                            <dt className="text-sm font-medium text-muted-foreground">Job Description</dt>
+                            <dd className="mt-1">{employee.job_description || '-'}</dd>
+                        </div>
+                        <div>
+                            <dt className="text-sm font-medium text-muted-foreground">Job Location</dt>
+                            <dd className="mt-1">{employee.job_location || '-'}</dd>
+                        </div>
+                        <div>
+                            <dt className="text-sm font-medium text-muted-foreground">Employee Number</dt>
+                            <dd className="mt-1">{employee.company_employee_number || '-'}</dd>
+                        </div>
                     </dl>
                 </div>
 
+                {/* Request Checkup */}
+                <div className="max-w-2xl rounded-xl border p-6">
+                    <h2 className="mb-4 text-lg font-semibold">Request Checkup</h2>
+                    <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
+                        <div className="grid gap-2">
+                            <Label htmlFor="examination_profile_id">Examination Profile *</Label>
+                            <Select
+                                value={form.data.examination_profile_id}
+                                onValueChange={(v) => form.setData('examination_profile_id', v)}
+                            >
+                                <SelectTrigger id="examination_profile_id">
+                                    <SelectValue placeholder="Select profile" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {examinationProfiles.map((profile) => (
+                                        <SelectItem key={profile.id} value={String(profile.id)}>
+                                            {profile.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <InputError message={form.errors.examination_profile_id} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="checkup_date">Checkup Date *</Label>
+                            <Input
+                                id="checkup_date"
+                                type="date"
+                                value={form.data.checkup_date}
+                                onChange={(e) => form.setData('checkup_date', e.target.value)}
+                                required
+                            />
+                            <InputError message={form.errors.checkup_date} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="exam_type">Exam Type</Label>
+                            <Select
+                                value={form.data.exam_type}
+                                onValueChange={(v) => form.setData('exam_type', v)}
+                            >
+                                <SelectTrigger id="exam_type">
+                                    <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="pre_employment">Pre-Employment</SelectItem>
+                                    <SelectItem value="periodic">Periodic</SelectItem>
+                                    <SelectItem value="other">Other</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <InputError message={form.errors.exam_type} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="job_environment">Job Environment</Label>
+                            <Select
+                                value={form.data.job_environment}
+                                onValueChange={(v) => form.setData('job_environment', v)}
+                            >
+                                <SelectTrigger id="job_environment">
+                                    <SelectValue placeholder="Select environment" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="office">Office</SelectItem>
+                                    <SelectItem value="rig_field">Rig / Field</SelectItem>
+                                    <SelectItem value="workshop_laboratory">Workshop / Laboratory</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <InputError message={form.errors.job_environment} />
+                        </div>
+
+                        <div className="grid gap-2 sm:col-span-2">
+                            <Label htmlFor="notes">Notes</Label>
+                            <Input
+                                id="notes"
+                                value={form.data.notes}
+                                onChange={(e) => form.setData('notes', e.target.value)}
+                                placeholder="Optional notes"
+                            />
+                            <InputError message={form.errors.notes} />
+                        </div>
+
+                        <div className="sm:col-span-2">
+                            <Button type="submit" disabled={form.processing || !form.data.examination_profile_id}>
+                                Submit Checkup Request
+                            </Button>
+                        </div>
+                    </form>
+                </div>
+
+                {/* Checkup History */}
                 <div className="rounded-xl border">
                     <div className="p-6">
                         <h2 className="text-lg font-semibold">Checkup History</h2>
@@ -96,18 +228,5 @@ export default function EmployeesShow({ employee }: Props) {
                 </div>
             </div>
         </AppLayout>
-    );
-}
-
-function StatusBadge({ status }: { status: string }) {
-    const styles = {
-        pass: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-        fail: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-        pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-    };
-    return (
-        <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${styles[status as keyof typeof styles] || styles.pending}`}>
-            {status.charAt(0).toUpperCase() + status.slice(1)}
-        </span>
     );
 }

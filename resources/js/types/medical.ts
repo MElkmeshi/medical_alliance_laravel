@@ -43,7 +43,13 @@ export type Employee = {
     id: number;
     company_id: number;
     name: string;
+    sex: string | null;
+    nationality: string | null;
     national_id: string;
+    home_address: string | null;
+    company_employee_number: string | null;
+    job_description: string | null;
+    job_location: string | null;
     date_of_birth: string | null;
     phone: string | null;
     email: string | null;
@@ -58,6 +64,8 @@ export type Checkup = {
     employee_id: number;
     examination_profile_id: number;
     checkup_date: string;
+    exam_type: 'pre_employment' | 'periodic' | 'other' | null;
+    job_environment: 'office' | 'rig_field' | 'workshop_laboratory' | null;
     status: 'pending' | 'pass' | 'fail';
     notes: string | null;
     performed_by: number | null;

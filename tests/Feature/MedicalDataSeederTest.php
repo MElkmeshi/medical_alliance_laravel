@@ -13,54 +13,47 @@ beforeEach(function () {
     $this->seed(MedicalDataSeeder::class);
 });
 
-test('it creates 10 examinations', function () {
-    expect(Examination::count())->toBe(10);
+test('it creates 68 examinations', function () {
+    expect(Examination::count())->toBe(68);
 });
 
 test('it creates examinations with correct attributes', function () {
-    $bloodSugar = Examination::where('name', 'Blood Sugar')->first();
+    $bloodSugar = Examination::where('name', 'Blood Sugar (Fasting)')->first();
 
     expect($bloodSugar)
-        ->unit->toBe('mg/dL')
-        ->min_value->toBe('70.00')
-        ->max_value->toBe('100.00')
-        ->is_required->toBeTrue()
-        ->requires_document->toBeFalse();
+        ->not->toBeNull()
+        ->unit->toBe('mmol/l')
+        ->is_required->toBeTrue();
 
     $chestXray = Examination::where('name', 'Chest X-Ray')->first();
 
     expect($chestXray)
+        ->not->toBeNull()
         ->is_required->toBeTrue()
-        ->requires_document->toBeTrue();
-
-    $ecg = Examination::where('name', 'ECG')->first();
-
-    expect($ecg)
-        ->is_required->toBeFalse()
         ->requires_document->toBeTrue();
 });
 
 test('it creates 4 examination profiles with correct exam counts', function () {
     expect(ExaminationProfile::count())->toBe(4);
 
-    $oilField = ExaminationProfile::where('name', 'Oil Field Pre-Employment')->first();
-    expect($oilField->examinations)->toHaveCount(8);
+    $slb = ExaminationProfile::where('name', 'SLB MedCheck Full')->first();
+    expect($slb->examinations)->toHaveCount(68);
 
-    $southAfrica = ExaminationProfile::where('name', 'South Africa Travel Health')->first();
-    expect($southAfrica->examinations)->toHaveCount(5);
+    $oilField = ExaminationProfile::where('name', 'Oil Field Pre-Employment')->first();
+    expect($oilField->examinations)->toHaveCount(56);
 
     $annual = ExaminationProfile::where('name', 'Annual Health Checkup')->first();
-    expect($annual->examinations)->toHaveCount(7);
+    expect($annual->examinations)->toHaveCount(43);
 
     $executive = ExaminationProfile::where('name', 'Executive Health Screening')->first();
-    expect($executive->examinations)->toHaveCount(10);
+    expect($executive->examinations)->toHaveCount(60);
 });
 
 test('it creates 3 companies with profiles assigned', function () {
     expect(Company::count())->toBe(3);
 
     $petroGulf = Company::where('name', 'PetroGulf Engineering')->first();
-    expect($petroGulf->examinationProfiles)->toHaveCount(2);
+    expect($petroGulf->examinationProfiles)->toHaveCount(3);
 
     $atlas = Company::where('name', 'Atlas Mining Corp')->first();
     expect($atlas->examinationProfiles)->toHaveCount(2);
@@ -110,5 +103,6 @@ test('it creates sample checkups with correct statuses', function () {
 });
 
 test('it creates checkup results for sample checkups', function () {
-    expect(CheckupResult::count())->toBe(19);
+    // Ahmad: 68, John: 56, Chen: 24, Mohamed: 0
+    expect(CheckupResult::count())->toBe(148);
 });

@@ -16,6 +16,8 @@ class Checkup extends Model
         'employee_id',
         'examination_profile_id',
         'checkup_date',
+        'exam_type',
+        'job_environment',
         'status',
         'notes',
         'performed_by',

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Company\StoreEmployeeRequest;
 use App\Http\Requests\Company\UpdateEmployeeRequest;
 use App\Models\Employee;
+use App\Models\ExaminationProfile;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -48,8 +49,14 @@ class EmployeeController extends Controller
             'checkups.results.examination',
         ]);
 
+        $examinationProfiles = ExaminationProfile::query()
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
         return Inertia::render('company/employees/show', [
             'employee' => $employee,
+            'examinationProfiles' => $examinationProfiles,
         ]);
     }
 

@@ -24,7 +24,13 @@ class UpdateEmployeeRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'sex' => ['nullable', 'string', 'in:male,female'],
+            'nationality' => ['nullable', 'string', 'max:100'],
             'national_id' => ['required', 'string', 'max:50', 'unique:employees,national_id,'.$this->route('employee')->id],
+            'home_address' => ['nullable', 'string', 'max:500'],
+            'company_employee_number' => ['nullable', 'string', 'max:100'],
+            'job_description' => ['nullable', 'string', 'max:255'],
+            'job_location' => ['nullable', 'string', 'max:100'],
             'date_of_birth' => ['nullable', 'date'],
             'phone' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email', 'max:255'],

@@ -1,5 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { CheckupResultsTable, computeIsNormal, hasRange } from '@/components/checkup-results-table';
+import { CheckupResultsTable, boolToStatus, computeIsNormal, hasRange } from '@/components/checkup-results-table';
 import type { ResultData } from '@/components/checkup-results-table';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -7,49 +7,52 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import type { Employee, Examination, ExaminationProfile } from '@/types/medical';
+import type { Checkup, Examination } from '@/types/medical';
 
 type FormData = {
-    employee_id: number;
-    examination_profile_id: number;
     checkup_date: string;
     notes: string;
     results: ResultData[];
 };
 
 type Props = {
-    employee: Employee;
-    examinationProfile: ExaminationProfile;
+    checkup: Checkup;
 };
 
-export default function CheckupCreate({ employee, examinationProfile }: Props) {
-    const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Admin Dashboard', href: '/admin/dashboard' },
-        { title: 'Companies', href: '/admin/companies' },
-        { title: employee.company?.name ?? 'Company', href: `/admin/companies/${employee.company_id}` },
-        { title: employee.name, href: `/admin/employees/${employee.id}` },
-        { title: 'New Checkup', href: `/admin/checkups/create?employee_id=${employee.id}&examination_profile_id=${examinationProfile.id}` },
-    ];
-
+export default function CheckupEdit({ checkup }: Props) {
+    const employee = checkup.employee!;
+    const examinationProfile = checkup.examination_profile!;
     const examinations: Examination[] = examinationProfile.examinations ?? [];
 
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: 'Admin Dashboard', href: '/admin/dashboard' },
+        { title: 'Checkups', href: '/admin/checkups' },
+        { title: `Checkup #${checkup.id}`, href: `/admin/checkups/${checkup.id}` },
+        { title: 'Fill Results', href: `/admin/checkups/${checkup.id}/edit` },
+    ];
+
+    const existingResults = Object.fromEntries(
+        (checkup.results ?? []).map((r) => [r.examination_id, r]),
+    );
+
     const form = useForm<FormData>({
-        employee_id: employee.id,
-        examination_profile_id: examinationProfile.id,
-        checkup_date: new Date().toISOString().split('T')[0],
-        notes: '',
-        results: examinations.map((exam) => ({
-            examination_id: exam.id,
-            value: '',
-            is_normal: 'pending',
-            document: null,
-            notes: '',
-        })),
+        checkup_date: checkup.checkup_date,
+        notes: checkup.notes ?? '',
+        results: examinations.map((exam) => {
+            const existing = existingResults[exam.id];
+            return {
+                examination_id: exam.id,
+                value: existing?.value ?? '',
+                is_normal: existing ? boolToStatus(existing.is_normal) : 'pending',
+                document: null,
+                notes: existing?.notes ?? '',
+            };
+        }),
     });
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        form.post('/admin/checkups', { forceFormData: true });
+        form.put(`/admin/checkups/${checkup.id}`, { forceFormData: true });
     }
 
     function updateResult(index: number, field: keyof ResultData, value: string | File | null) {
@@ -68,9 +71,9 @@ export default function CheckupCreate({ employee, examinationProfile }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="New Checkup" />
+            <Head title={`Fill Results — Checkup #${checkup.id}`} />
             <div className="flex flex-col gap-6 p-6">
-                <h1 className="text-xl font-semibold tracking-tight">New Checkup</h1>
+                <h1 className="text-xl font-semibold tracking-tight">Fill Results — Checkup #{checkup.id}</h1>
 
                 <div className="max-w-4xl rounded-xl border p-6">
                     <dl className="grid gap-2 sm:grid-cols-3">
@@ -123,10 +126,10 @@ export default function CheckupCreate({ employee, examinationProfile }: Props) {
 
                     <div className="flex items-center gap-4">
                         <Button type="submit" disabled={form.processing}>
-                            Create Checkup
+                            Save Results
                         </Button>
                         <Button variant="outline" asChild>
-                            <Link href={`/admin/employees/${employee.id}`}>Cancel</Link>
+                            <Link href={`/admin/checkups/${checkup.id}`}>Cancel</Link>
                         </Button>
                     </div>
                 </form>

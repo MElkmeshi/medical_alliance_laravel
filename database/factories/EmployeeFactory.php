@@ -20,7 +20,13 @@ class EmployeeFactory extends Factory
         return [
             'company_id' => Company::factory(),
             'name' => fake()->name(),
+            'sex' => fake()->randomElement(['male', 'female']),
+            'nationality' => fake()->country(),
             'national_id' => fake()->unique()->numerify('##########'),
+            'home_address' => fake()->address(),
+            'company_employee_number' => fake()->optional()->numerify('EMP-####'),
+            'job_description' => fake()->jobTitle(),
+            'job_location' => fake()->country(),
             'date_of_birth' => fake()->date(),
             'phone' => fake()->phoneNumber(),
             'email' => fake()->unique()->safeEmail(),

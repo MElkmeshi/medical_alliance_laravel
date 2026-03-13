@@ -6,6 +6,32 @@ use App\Models\Examination;
 use App\Models\ExaminationProfile;
 use App\Models\User;
 
+uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+
+test('admin can view checkups index', function () {
+    $admin = User::factory()->admin()->create();
+    Checkup::factory()->count(3)->create();
+
+    $response = $this->actingAs($admin)->get(route('admin.checkups.index'));
+
+    $response->assertOk();
+});
+
+test('admin can filter checkups by status', function () {
+    $admin = User::factory()->admin()->create();
+    Checkup::factory()->create(['status' => 'pending']);
+    Checkup::factory()->create(['status' => 'pass']);
+
+    $response = $this->actingAs($admin)->get(route('admin.checkups.index', ['status' => 'pending']));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/checkups/index')
+        ->where('checkups.data.0.status', 'pending')
+        ->where('checkups.total', 1)
+    );
+});
+
 test('admin can view checkup create form', function () {
     $admin = User::factory()->admin()->create();
     $employee = Employee::factory()->create();
@@ -116,6 +142,47 @@ test('admin can view checkup details', function () {
     $response = $this->actingAs($admin)->get(route('admin.checkups.show', $checkup));
 
     $response->assertOk();
+});
+
+test('admin can view the fill results form for a pending checkup', function () {
+    $admin = User::factory()->admin()->create();
+    $profile = ExaminationProfile::factory()->create();
+    $examinations = Examination::factory()->count(2)->create();
+    $profile->examinations()->sync($examinations->pluck('id'));
+    $checkup = Checkup::factory()->create([
+        'examination_profile_id' => $profile->id,
+        'status' => 'pending',
+    ]);
+
+    $response = $this->actingAs($admin)->get(route('admin.checkups.edit', $checkup));
+
+    $response->assertOk();
+});
+
+test('admin can submit results for an existing checkup', function () {
+    $admin = User::factory()->admin()->create();
+    $employee = Employee::factory()->create();
+    $profile = ExaminationProfile::factory()->create();
+    $examinations = Examination::factory()->count(2)->create(['is_required' => true]);
+    $profile->examinations()->sync($examinations->pluck('id'));
+    $checkup = Checkup::factory()->create([
+        'employee_id' => $employee->id,
+        'examination_profile_id' => $profile->id,
+        'status' => 'pending',
+    ]);
+
+    $response = $this->actingAs($admin)->put(route('admin.checkups.update', $checkup), [
+        'checkup_date' => now()->toDateString(),
+        'results' => $examinations->map(fn ($exam) => [
+            'examination_id' => $exam->id,
+            'value' => '98',
+            'is_normal' => true,
+        ])->toArray(),
+    ]);
+
+    $response->assertRedirect(route('admin.checkups.show', $checkup));
+    expect($checkup->fresh()->status)->toBe('pass');
+    expect($checkup->fresh()->results)->toHaveCount(2);
 });
 
 test('company member cannot access admin checkups', function () {

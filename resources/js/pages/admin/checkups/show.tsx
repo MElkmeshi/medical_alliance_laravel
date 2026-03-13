@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { StatusBadge } from '@/components/status-badge';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
@@ -24,9 +25,16 @@ export default function CheckupShow({ checkup }: Props) {
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex items-center justify-between">
                     <h1 className="text-xl font-semibold tracking-tight">Checkup #{checkup.id}</h1>
-                    <Button variant="outline" asChild>
-                        <Link href={`/admin/employees/${checkup.employee_id}`}>Back to Employee</Link>
-                    </Button>
+                    <div className="flex gap-2">
+                        {checkup.status === 'pending' && (
+                            <Button asChild>
+                                <Link href={`/admin/checkups/${checkup.id}/edit`}>Start Checkup</Link>
+                            </Button>
+                        )}
+                        <Button variant="outline" asChild>
+                            <Link href={`/admin/employees/${checkup.employee_id}`}>Back to Employee</Link>
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Checkup Details */}
@@ -139,19 +147,6 @@ export default function CheckupShow({ checkup }: Props) {
                 </div>
             </div>
         </AppLayout>
-    );
-}
-
-function StatusBadge({ status }: { status: string }) {
-    const styles = {
-        pass: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-        fail: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-        pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-    };
-    return (
-        <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${styles[status as keyof typeof styles] || styles.pending}`}>
-            {status.charAt(0).toUpperCase() + status.slice(1)}
-        </span>
     );
 }
 

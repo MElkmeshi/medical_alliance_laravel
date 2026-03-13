@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Building2, ClipboardList, LayoutGrid, Stethoscope, Users } from 'lucide-react';
+import { Building2, ClipboardList, ClipboardPlus, LayoutGrid, Stethoscope, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -34,6 +34,11 @@ const adminNavItems: NavItem[] = [
         title: 'Companies',
         href: '/admin/companies',
         icon: Building2,
+    },
+    {
+        title: 'Checkups',
+        href: '/admin/checkups',
+        icon: ClipboardPlus,
     },
 ];
 

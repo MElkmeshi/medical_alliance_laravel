@@ -8,5 +8,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'verified', 'company_member'])->prefix('company')->name('company.')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('employees', EmployeeController::class);
+    Route::post('checkups', [CheckupController::class, 'store'])->name('checkups.store');
     Route::get('checkups/{checkup}', [CheckupController::class, 'show'])->name('checkups.show');
 });

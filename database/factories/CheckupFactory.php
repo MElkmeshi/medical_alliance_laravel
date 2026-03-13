@@ -23,6 +23,8 @@ class CheckupFactory extends Factory
             'employee_id' => Employee::factory(),
             'examination_profile_id' => ExaminationProfile::factory(),
             'checkup_date' => fake()->date(),
+            'exam_type' => fake()->randomElement(['pre_employment', 'periodic', 'other']),
+            'job_environment' => fake()->randomElement(['office', 'rig_field', 'workshop_laboratory']),
             'status' => 'pending',
             'notes' => fake()->optional()->sentence(),
             'performed_by' => User::factory(),

@@ -1,5 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { StatusBadge } from '@/components/status-badge';
+import { formatDate } from '@/lib/utils';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -58,7 +59,7 @@ export default function EmployeesShow({ employee, examinationProfiles }: Props) 
                         </div>
                         <div>
                             <dt className="text-sm font-medium text-muted-foreground">Date of Birth</dt>
-                            <dd className="mt-1">{employee.date_of_birth || '-'}</dd>
+                            <dd className="mt-1">{formatDate(employee.date_of_birth)}</dd>
                         </div>
                         <div>
                             <dt className="text-sm font-medium text-muted-foreground">Sex</dt>
@@ -201,7 +202,7 @@ export default function EmployeesShow({ employee, examinationProfiles }: Props) 
                                 {employee.checkups?.map((checkup) => (
                                     <tr key={checkup.id} className="border-t">
                                         <td className="px-6 py-3">{checkup.examination_profile?.name}</td>
-                                        <td className="px-6 py-3">{checkup.checkup_date}</td>
+                                        <td className="px-6 py-3">{formatDate(checkup.checkup_date)}</td>
                                         <td className="px-6 py-3">
                                             <StatusBadge status={checkup.status} />
                                         </td>

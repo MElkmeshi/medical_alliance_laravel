@@ -1,5 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { StatusBadge } from '@/components/status-badge';
+import { formatDate } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -100,7 +101,7 @@ export default function CheckupsIndex({ checkups, filters }: Props) {
                                             {checkup.employee?.company?.name ?? '-'}
                                         </td>
                                         <td className="px-6 py-3">{checkup.examination_profile?.name ?? '-'}</td>
-                                        <td className="px-6 py-3">{checkup.checkup_date}</td>
+                                        <td className="px-6 py-3">{formatDate(checkup.checkup_date)}</td>
                                         <td className="px-6 py-3 text-muted-foreground">
                                             {checkup.exam_type ? EXAM_TYPE_LABELS[checkup.exam_type] : '-'}
                                         </td>

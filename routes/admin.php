@@ -13,6 +13,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::resource('examinations', ExaminationController::class);
     Route::resource('examination-profiles', ExaminationProfileController::class);
     Route::resource('companies', CompanyController::class);
+    Route::get('employees', [EmployeeController::class, 'index'])->name('employees.index');
     Route::get('employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
     Route::resource('checkups', CheckupController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
 });

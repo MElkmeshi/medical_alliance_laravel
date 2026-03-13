@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { StatusBadge } from '@/components/status-badge';
+import { formatDate } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
@@ -15,12 +16,12 @@ export default function CheckupsShow({ checkup }: Props) {
         { title: 'Company Dashboard', href: '/company/dashboard' },
         { title: 'Employees', href: '/company/employees' },
         { title: checkup.employee?.name || 'Employee', href: `/company/employees/${checkup.employee_id}` },
-        { title: `Checkup - ${checkup.checkup_date}`, href: `/company/checkups/${checkup.id}` },
+        { title: `Checkup - ${formatDate(checkup.checkup_date)}`, href: `/company/checkups/${checkup.id}` },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Checkup - ${checkup.checkup_date}`} />
+            <Head title={`Checkup - ${formatDate(checkup.checkup_date)}`} />
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-semibold">Checkup Details</h1>
@@ -41,7 +42,7 @@ export default function CheckupsShow({ checkup }: Props) {
                         </div>
                         <div>
                             <dt className="text-sm font-medium text-muted-foreground">Date</dt>
-                            <dd className="mt-1">{checkup.checkup_date}</dd>
+                            <dd className="mt-1">{formatDate(checkup.checkup_date)}</dd>
                         </div>
                         <div>
                             <dt className="text-sm font-medium text-muted-foreground">Status</dt>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { StatusBadge } from '@/components/status-badge';
+import { formatDate } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
@@ -54,18 +55,31 @@ export default function EmployeeShow({ employee, examinationProfiles }: Props) {
                 </div>
 
                 <div className="max-w-2xl rounded-xl border p-6">
-                    <dl className="grid gap-4">
+                    <p className="mb-4 text-sm font-medium text-muted-foreground">Personal Information</p>
+                    <dl className="grid gap-4 sm:grid-cols-2">
                         <div>
                             <dt className="text-sm font-medium text-muted-foreground">Name</dt>
                             <dd className="mt-1">{employee.name}</dd>
+                        </div>
+                        <div>
+                            <dt className="text-sm font-medium text-muted-foreground">Sex</dt>
+                            <dd className="mt-1 capitalize">{employee.sex ?? '-'}</dd>
+                        </div>
+                        <div>
+                            <dt className="text-sm font-medium text-muted-foreground">Date of Birth</dt>
+                            <dd className="mt-1">{formatDate(employee.date_of_birth)}</dd>
+                        </div>
+                        <div>
+                            <dt className="text-sm font-medium text-muted-foreground">Nationality</dt>
+                            <dd className="mt-1">{employee.nationality ?? '-'}</dd>
                         </div>
                         <div>
                             <dt className="text-sm font-medium text-muted-foreground">National ID</dt>
                             <dd className="mt-1">{employee.national_id}</dd>
                         </div>
                         <div>
-                            <dt className="text-sm font-medium text-muted-foreground">Date of Birth</dt>
-                            <dd className="mt-1">{employee.date_of_birth ?? '-'}</dd>
+                            <dt className="text-sm font-medium text-muted-foreground">Home Address</dt>
+                            <dd className="mt-1">{employee.home_address ?? '-'}</dd>
                         </div>
                         <div>
                             <dt className="text-sm font-medium text-muted-foreground">Phone</dt>
@@ -75,6 +89,10 @@ export default function EmployeeShow({ employee, examinationProfiles }: Props) {
                             <dt className="text-sm font-medium text-muted-foreground">Email</dt>
                             <dd className="mt-1">{employee.email ?? '-'}</dd>
                         </div>
+                    </dl>
+
+                    <p className="mb-4 mt-6 text-sm font-medium text-muted-foreground">Employment Information</p>
+                    <dl className="grid gap-4 sm:grid-cols-2">
                         <div>
                             <dt className="text-sm font-medium text-muted-foreground">Company</dt>
                             <dd className="mt-1">
@@ -82,10 +100,20 @@ export default function EmployeeShow({ employee, examinationProfiles }: Props) {
                                     <Link href={`/admin/companies/${employee.company.id}`} className="text-primary hover:underline">
                                         {employee.company.name}
                                     </Link>
-                                ) : (
-                                    '-'
-                                )}
+                                ) : '-'}
                             </dd>
+                        </div>
+                        <div>
+                            <dt className="text-sm font-medium text-muted-foreground">Employee ID / GIN</dt>
+                            <dd className="mt-1">{employee.company_employee_number ?? '-'}</dd>
+                        </div>
+                        <div>
+                            <dt className="text-sm font-medium text-muted-foreground">Job Description</dt>
+                            <dd className="mt-1">{employee.job_description ?? '-'}</dd>
+                        </div>
+                        <div>
+                            <dt className="text-sm font-medium text-muted-foreground">Job Location</dt>
+                            <dd className="mt-1">{employee.job_location ?? '-'}</dd>
                         </div>
                     </dl>
                 </div>
@@ -109,7 +137,7 @@ export default function EmployeeShow({ employee, examinationProfiles }: Props) {
                             <tbody>
                                 {(employee.checkups ?? []).map((checkup) => (
                                     <tr key={checkup.id} className="border-t">
-                                        <td className="px-6 py-3">{checkup.checkup_date}</td>
+                                        <td className="px-6 py-3">{formatDate(checkup.checkup_date)}</td>
                                         <td className="px-6 py-3">{checkup.examination_profile?.name ?? '-'}</td>
                                         <td className="px-6 py-3">
                                             <StatusBadge status={checkup.status} />

@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { StatusBadge } from '@/components/status-badge';
+import { formatDate } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
@@ -74,7 +75,7 @@ export default function CheckupShow({ checkup }: Props) {
                         </div>
                         <div>
                             <dt className="text-sm font-medium text-muted-foreground">Checkup Date</dt>
-                            <dd className="mt-1">{checkup.checkup_date}</dd>
+                            <dd className="mt-1">{formatDate(checkup.checkup_date)}</dd>
                         </div>
                         <div>
                             <dt className="text-sm font-medium text-muted-foreground">Status</dt>

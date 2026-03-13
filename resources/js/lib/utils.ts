@@ -10,3 +10,9 @@ export function cn(...inputs: ClassValue[]) {
 export function toUrl(url: NonNullable<InertiaLinkProps['href']>): string {
     return typeof url === 'string' ? url : url.url;
 }
+
+export function formatDate(value: string | null | undefined): string {
+    if (!value) return '-';
+    const date = new Date(value);
+    return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+}
